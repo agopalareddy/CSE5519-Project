@@ -1,0 +1,74 @@
+# LaTeX auxiliary files
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.brf
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.lof
+*.lot
+*.lol
+*.idx
+*.ind
+*.ilg
+*.glo
+*.gls
+*.glg
+*.ist
+*.acn
+*.acr
+*.alg
+*.glsdefs
+*.nav
+*.snm
+*.vrb
+*.figlist
+*.makefile
+*.thm
+
+# LaTeX temporary files
+*.backup
+*~
+.*.lb
+
+# LaTeX bibliography files
+*.bib.bak
+*.bib.sav
+
+# LaTeX editor files
+*.savetex
+*.fuse*
+*.swp
+*.swo
+
+# PDFLaTeX specific
+*.pdfsync
+
+# XeLaTeX specific
+*.xdv
+
+# LuaLaTeX specific
+*.fdb_latexmk
+*.figlist
+*.makefile
+
+# Latexmk
+*.fls
+
+# Build directories
+build/
+output/
+
+.github/
+.jules/
+.vscode/
+.idea/
+.junie/
+*.code-workspace
+*.sublime-workspace

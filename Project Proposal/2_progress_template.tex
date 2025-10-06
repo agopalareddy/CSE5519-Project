@@ -1,0 +1,118 @@
+% CVPR 2022 Paper Template
+% based on the CVPR template provided by Ming-Ming Cheng (https://github.com/MCG-NKU/CVPR_Template)
+% modified and extended by Stefan Roth (stefan.roth@NOSPAMtu-darmstadt.de)
+
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+%%%%%%%%% PAPER TYPE  - PLEASE UPDATE FOR FINAL VERSION
+% \usepackage[review]{cvpr}      % To produce the REVIEW version
+% \usepackage{cvpr}              % To produce the CAMERA-READY version
+\usepackage[pagenumbers]{cvpr} % To force page numbers, e.g. for an arXiv version
+
+% Include other packages here, before hyperref.
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+
+% It is strongly recommended to use hyperref, especially for the review version.
+% hyperref with option pagebackref eases the reviewers' job.
+% Please disable hyperref *only* if you encounter grave issues, e.g. with the
+% file validation for the camera-ready version.
+%
+% If you comment hyperref and then uncomment it, you should delete
+% ReviewTempalte.aux before re-running LaTeX.
+% (Or just hit 'q' on the first LaTeX run, let it finish, and you
+%  should be clear).
+\usepackage[pagebackref,breaklinks,colorlinks]{hyperref}
+
+
+% Support for easy cross-referencing
+\usepackage[capitalize]{cleveref}
+\crefname{section}{Sec.}{Secs.}
+\Crefname{section}{Section}{Sections}
+\Crefname{table}{Table}{Tables}
+\crefname{table}{Tab.}{Tabs.}
+
+\include{metadata.tex}
+
+\begin{document}
+
+%%%%%%%%% TITLE - PLEASE UPDATE
+\title{Progress Report: Your Title Goes Here}
+
+\author{
+Member One Name \hspace{1in} Member Two Name \hspace{1in} Member Three Name 
+}
+\maketitle
+
+%%%%%%%%% ABSTRACT
+\begin{abstract}
+  Your abstract goes here.
+\end{abstract}
+
+%%%%%%%%% BODY TEXT
+\section{Project Overview}
+
+Add your project description and goals here. This can be mostly a copy of your proposal, but be sure to \emph{emphasize} and explain any major changes.
+
+\section{Team Member Roles/Tasks}
+\label{sec:roles}
+
+\subsection{Member One Name}
+
+\begin{enumerate}
+
+\item task 1
+\item task 2
+\item \ldots
+
+\end{enumerate}
+
+\subsection{Member Two Name}
+
+\begin{enumerate}
+
+\item task 1
+\item task 2
+\item \ldots
+
+\end{enumerate}
+
+\subsection{Member Three Name}
+
+\begin{enumerate}
+
+\item task 1
+\item task 2
+\item \ldots
+
+\end{enumerate}
+
+\section{Collaboration Strategy}
+
+Your collaboration strategy goes here.
+
+\section{Proposed Approach}
+
+Your proposed approach goes here.
+
+\section{Data}
+
+Your data description goes here.
+
+\section{Initial Results}
+
+Your initial results go here.
+
+\section{Current Concerns and Questions}
+
+Please list any concerns or questions here.
+
+%%%%%%%%% REFERENCES
+{\small
+\bibliographystyle{ieee_fullname}
+\bibliography{bibliography}
+}
+
+\end{document}

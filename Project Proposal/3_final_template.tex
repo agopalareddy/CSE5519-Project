@@ -1,0 +1,91 @@
+% CVPR 2022 Paper Template
+% based on the CVPR template provided by Ming-Ming Cheng (https://github.com/MCG-NKU/CVPR_Template)
+% modified and extended by Stefan Roth (stefan.roth@NOSPAMtu-darmstadt.de)
+
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+%%%%%%%%% PAPER TYPE  - PLEASE UPDATE FOR FINAL VERSION
+% \usepackage[review]{cvpr}      % To produce the REVIEW version
+% \usepackage{cvpr}              % To produce the CAMERA-READY version
+\usepackage[pagenumbers]{cvpr} % To force page numbers, e.g. for an arXiv version
+
+% Include other packages here, before hyperref.
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+
+% It is strongly recommended to use hyperref, especially for the review version.
+% hyperref with option pagebackref eases the reviewers' job.
+% Please disable hyperref *only* if you encounter grave issues, e.g. with the
+% file validation for the camera-ready version.
+%
+% If you comment hyperref and then uncomment it, you should delete
+% ReviewTempalte.aux before re-running LaTeX.
+% (Or just hit 'q' on the first LaTeX run, let it finish, and you
+%  should be clear).
+\usepackage[pagebackref,breaklinks,colorlinks]{hyperref}
+
+
+% Support for easy cross-referencing
+\usepackage[capitalize]{cleveref}
+\crefname{section}{Sec.}{Secs.}
+\Crefname{section}{Section}{Sections}
+\Crefname{table}{Table}{Tables}
+\crefname{table}{Tab.}{Tabs.}
+
+\include{metadata.tex}
+
+\begin{document}
+
+%%%%%%%%% TITLE - PLEASE UPDATE
+\title{Your Project Title Goes Here}
+
+\author{
+Member One Name \hspace{1in} Member Two Name \hspace{1in} Member Three Name 
+}
+\maketitle
+
+%%%%%%%%% ABSTRACT
+\begin{abstract}
+  Your abstract goes here.
+\end{abstract}
+
+\section{Introduction}
+
+Define and motivate the problem, discuss background material or related work, and briefly summarize your approach.
+
+\section{Related Work}
+
+Include citations~\cite{Alpher02,Alpher03} to any papers you referenced and, if applicable, the relationship to your work.
+
+\section{Approach}
+
+Include any formulas, pseudocode, diagrams -- anything that is necessary to clearly explain your system and what you have done. If possible, illustrate the intermediate stages of your approach with results images.
+
+\section{Results}
+
+Clearly describe your experimental protocols. If you are using training and test data, report the numbers of training and test images. Be sure to include example output figures. Quantitative evaluation is always a big plus (if applicable). If you are working with videos, put example output on YouTube or some other external repository and include links in your report.
+
+\section{Discussion and Conclusions}
+
+Summarize the main insights drawn from your analysis and experiments. You can get a good project grade with mostly negative results, as long as you show evidence of extensive exploration, thoughtfully analyze the causes of your negative results, and discuss potential solutions.
+
+
+\section{Statement of Individual Contribution}
+
+Summarize who did what, including data collection, annotation, group coordination, integrating external libraries, writing source code (which component?), etc.
+
+\section{External Resources Used}
+
+Summarize all external resources utilized.
+
+For any source code or libraries you used, you must include a description of how you used it and a URL (using \verb|\url{LINK ADDRESS}| like \url{http://www.cse.wustl.edu}).
+
+%%%%%%%%% REFERENCES
+{\small
+\bibliographystyle{ieee_fullname}
+\bibliography{bibliography}
+}
+
+\end{document}

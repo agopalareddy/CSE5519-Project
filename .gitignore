@@ -65,7 +65,6 @@
 build/
 output/
 
-# IDE and Editor files
 .github/
 .jules/
 .vscode/

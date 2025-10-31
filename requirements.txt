@@ -1,0 +1,25 @@
+# Python dependencies for CSE5519 Visual Auto Defender Project
+
+# Core ML/AI libraries
+openai>=1.0.0  # For API access to GPT-4V or similar VLMs
+anthropic  # Alternative VLM provider
+python-dotenv>=1.0.0  # Environment variable management
+
+# Image processing (Phase 1)
+pillow>=10.0.0  # Image manipulation and generation
+opencv-python>=4.8.0  # Computer vision utilities
+requests>=2.31.0  # For downloading images
+
+# Image generation (Phase 2)
+diffusers  # For Stable Diffusion if using local generation
+torch  # PyTorch for model inference
+
+# Utilities
+numpy>=1.24.0
+pandas>=2.0.0  # For results analysis
+matplotlib>=3.7.0  # Visualization
+tqdm  # Progress bars
+
+# Testing
+pytest>=7.4.0
+pytest-cov  # Coverage reports

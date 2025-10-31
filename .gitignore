@@ -127,11 +127,7 @@ results/*.json
 !data/attack_images/.gitkeep
 !data/defense_scripts/.gitkeep
 
-# LaTeX PDFs (generated files)
-*.pdf
-
 # Project Proposal built files
-Project Proposal/*.pdf
 Project Proposal/*.aux
 Project Proposal/*.bbl
 Project Proposal/*.blg

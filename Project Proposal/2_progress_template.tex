@@ -39,16 +39,24 @@
 \begin{document}
 
 %%%%%%%%% TITLE - PLEASE UPDATE
-\title{Progress Report: Your Title Goes Here}
+\title{Progress Report: Red-Blue Visual Auto Defender}
 
 \author{
-  Member One Name \hspace{1in} Member Two Name \hspace{1in} Member Three Name
+    Stuart Aldrich \hspace{1in} Mohammad Rouie Miab \hspace{1in} Aadarsha Gopala Reddy
 }
 \maketitle
 
 %%%%%%%%% ABSTRACT
 \begin{abstract}
-  Your abstract goes here.
+    Jailbreaks are an increasing problem in the LLM space, and vision language models provide an additional attack surface.
+    Much of the existing work focuses on utilizing machine learning models to prevent attacks \cite{10657949}.
+    This presents potentially an additional attack surface where the defense model itself could be attacked \cite{299563}.
+    And most attacks are focused on traditional classifier-style attacks with image perturbation \cite{10.5555/3698900.3699069}.
+    This creates an opening for an entire new class of attacks: image-based prompt injections.
+    We look to provide a tool to automatically defend against jailbreaks against a vision language model in the image space.
+    In this project, we will create a tool to automatically generate attacks against VLMs and automatically create defenses against attacks.
+    We will test against a simulation of a real agent in a real domain, such as an email inbox management AI agent.
+    Our system creates an image generation prompt containing an attack, generates an image with that attack embedded, tests the attack against a target agent, utilizes a VLM to describe the attack image, and generates a Python script to detect the attack based on the description.
 \end{abstract}
 
 %%%%%%%%% BODY TEXT
@@ -56,42 +64,79 @@
 
 Add your project description and goals here. This can be mostly a copy of your proposal, but be sure to \emph{emphasize} and explain any major changes.
 
+
+Vision Language Models (VLMs) are systems that ingest text and images simultaneously and generate a resulting text based on the given input.
+These VLMs are increasingly utilized as core components in AI agents, for example, email agents to automatically summarize and respond to emails in a user's inbox.
+In traditional LLMs, jailbreaking and prompt injection attacks are commonly known to cause LLMs to behave maliciously in the text domain.
+However, VLMs provide an additional attack surface through the image input component.
+Protecting VLMs from jailbreaks is an underexplored area and is often done through machine learning models.
+While a machine learning model can provide effective protection, it often has poor explainability and may not have deterministic results\cite{qi_visual_2024}\cite{ying_jailbreak_2025}.
+It may additionally be weak to attacks intended for targeting image classifiers\cite{jeong_playing_2025}\cite{wang_steering_2025}.
+\subsection{Method}
+We seek to provide a method that improves on all three: improved explainability of classification, deterministic results, and not being vulnerable to attacks specifically targeting machine learning models.
+Our approach is to create a red-blue teaming approach to automatically create attacks on VLMs, then generate defensive tools to detect the generated attacks.
+The specific planned method is to:
+
+\begin{enumerate}
+    \item Utilize an attacking (red team) VLM to generate an attacking prompt.
+    \item Generate an image containing the attack prompt.
+    \item Describe the contents of the attacking image through a VLM.
+    \item Using a defending (blue team) VLM, generate a Python script that can parse the image description to detect the attack.
+\end{enumerate}
+
+This method will be executed in a refinement loop on both the red and blue team components.
+The red team component will refine the attack until it succeeds on a target VLM agent system by detecting if a goal has been achieved.
+The blue team component will refine the defense until it detects the attack and allows a set of non-attack images.
+Once both components are refined, it will repeat the process N times until the defensive script can defend against N attacks derived from a given starting attack.
+The process is then repeated through other base attacks, including attacks attempting to target the defensive system itself.
+
+Once the full system refinement process is completed, the target VLM agent will have a set of defensive scripts able to detect a spectrum of attacks from a single image description.
+These scripts will be computationally efficient, deterministic, and explainable.
+
+\subsection{Minimum Expected Goals}
+We at a minimum expect to have a system able to generate a single attack that has a single detection script.
+
+\subsection{Maximum Expected Goals}
+We expect at most to have a system to create a large variety of attacks and defenses, including the ability to defend against attacks targeting the defensive system itself for weaknesses.
+
 \section{Team Member Roles/Tasks}
 \label{sec:roles}
 
 \subsection{Member One Name}
 
+We intentionally share building attacker and defender roles, as based on Stuart's experience with a related project, multiple students working in parallel allows for better exploration and helps avoid getting stuck. Once each student has working versions, they will be combined, utilizing the best elements of each.
+
+\subsection{Stuart Aldrich}
+
 \begin{enumerate}
 
-  \item task 1
-  \item task 2
-  \item \ldots
+    \item \textbf{Prototype Attacks} Create working case study attack examples where the attacker successfully creates a malicious image that performs prompt injection to the target agent.
+    \item \textbf{Prototype Defenses} Create case study examples where the defender blocks some attacks.
+    \item \textbf{Literature Review} Look towards existing literature to attempt to enhance the core ideas.
 
 \end{enumerate}
 
-\subsection{Member Two Name}
+\subsection{Mohammad Rouie Miab}
 
 \begin{enumerate}
 
-  \item task 1
-  \item task 2
-  \item \ldots
+    \item \textbf{Safe-image dataset selection and preparation:} Identify and curate a diverse and robust set of benign images for testing the defender. This involves additionally organizing images into train, test, and validation splits, as well as any preprocessing scripts.
+    \item \textbf{Attack image generator:} Implement a pipeline that deterministically creates images with embedded attack prompts as text and visuals. Resultant images are then readily usable for the VLM.
+    \item \textbf{Analysis of the results and performance:} Analyze and summarize performance measurements of attacks and defenses across experiments. Analysis will also include commentary on failure points and recommendations for future improvements.
 
 \end{enumerate}
 
-\subsection{Member Three Name}
-
+\subsection{Aadarsha Gopala Reddy}
 \begin{enumerate}
+    \item \textbf{Develop the Attack Success-Condition Module:} Design and implement the goal achievement detector for the red team. This involves defining success metrics for an attack (e.g., the target VLM producing a harmful response) and writing scripts to automatically parse the VLM's output to determine if an attack was successful.
 
-  \item task 1
-  \item task 2
-  \item \ldots
+    \item \textbf{Implement the Defense Validation Framework:} Build the system that executes the VLM-generated Python detection scripts. This framework will test the scripts against both malicious and benign images to measure their precision, recall, and overall effectiveness.
 
 \end{enumerate}
 
 \section{Collaboration Strategy}
 
-Your collaboration strategy goes here.
+We communicate over group text messaging and have ad-hoc meetings as needed.
 
 \section{Proposed Approach}
 
@@ -109,10 +154,10 @@ Your initial results go here.
 
 Please list any concerns or questions here.
 
-  %%%%%%%%% REFERENCES
-  {\small
-    \bibliographystyle{ieee_fullname}
-    \bibliography{bibliography}
-  }
+    %%%%%%%%% REFERENCES
+    {\small
+        \bibliographystyle{ieee_fullname}
+        \bibliography{bibliography}
+    }
 
 \end{document}

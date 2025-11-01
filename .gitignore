@@ -65,7 +65,6 @@
 build/
 output/
 
-# IDE and Editor files
 .github/
 .jules/
 .vscode/
@@ -127,3 +126,8 @@ results/*.json
 !results/.gitkeep
 !data/attack_images/.gitkeep
 !data/defense_scripts/.gitkeep
+
+# Project Proposal built files
+Project Proposal/*.aux
+Project Proposal/*.bbl
+Project Proposal/*.blg

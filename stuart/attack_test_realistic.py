@@ -90,7 +90,7 @@ messages = [
 message = [{
     "role": "user",
     "content": [
-        {"type": "text", "text": "Describe the content of this image."},
+        {"type": "text", "text": prompt},
         {
             "type": "image",
             "base64": img_base64,
@@ -104,3 +104,4 @@ result = llm.invoke(message)
 pprint(result)
 print("\n\n")
 print(result.content)
+print()

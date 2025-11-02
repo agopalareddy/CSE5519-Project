@@ -1,5 +1,6 @@
 """
 Integration Pipeline
+
 Author: Stuart Aldrich and Aadarsha Gopala Reddy
 
 This module orchestrates the red-blue team attack and defense refinement loop.
@@ -10,11 +11,18 @@ import json
 from pathlib import Path
 from typing import Dict, List, Any, Optional, Tuple
 from datetime import datetime
+import torch
+from transformers import pipeline
+import os
+from dotenv import load_dotenv
+from huggingface_hub import login
 
 from attack_generator import AttackGenerator
 from defense_generator import DefenseGenerator
 from attack_success_detector import AttackSuccessDetector
 from defense_validator import DefenseValidator
+
+load_dotenv()
 
 
 class RedBluePipeline:
@@ -24,6 +32,7 @@ class RedBluePipeline:
         self,
         output_dir: str = "red_blue_results",
         max_refinement_iterations: int = 5,
+        model_name: str = "google/gemma-3-4b-it",
     ):
         """
         Initialize the red-blue pipeline.
@@ -31,16 +40,25 @@ class RedBluePipeline:
         Args:
             output_dir: Directory to save outputs
             max_refinement_iterations: Maximum number of refinement loops
+            model_name: HuggingFace model to use (loaded once and shared)
         """
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(exist_ok=True)
 
         self.max_refinement_iterations = max_refinement_iterations
+        self.model_name = model_name
 
-        # Initialize components
-        self.attack_generator = AttackGenerator()
-        self.defense_generator = DefenseGenerator()
-        self.attack_detector = AttackSuccessDetector()
+        # Load model once and share it
+        print("Loading shared VLM model...")
+        self.shared_pipe = self._load_model()
+        print(f"✓ Shared model loaded on device: {self.shared_pipe.device}\n")
+
+        # Initialize components with shared model
+        self.attack_generator = AttackGenerator(shared_pipe=self.shared_pipe)
+        self.defense_generator = DefenseGenerator(shared_pipe=self.shared_pipe)
+        self.attack_detector = AttackSuccessDetector(
+            use_vlm_evaluation=False
+        )  # Keyword-based to save GPU memory
         self.defense_validator = DefenseValidator()
 
         # Track results
@@ -49,6 +67,42 @@ class RedBluePipeline:
             "defenses": [],
             "iterations": [],
         }
+
+    def _load_model(self):
+        """Load the VLM model once, shared by all components."""
+        # Authenticate with Hugging Face Hub if token is available
+        hf_token = (
+            os.getenv("HF_TOKEN")
+            or os.getenv("HUGGINGFACE_TOKEN")
+            or os.getenv("HUGGINGFACE_READ_TOKEN")
+        )
+        if hf_token:
+            try:
+                login(token=hf_token)
+                print("✓ Authenticated with Hugging Face Hub")
+            except Exception as e:
+                print(f"⚠ Warning: Failed to authenticate with HF Hub: {e}")
+        else:
+            print("⚠ Warning: No HF token found in environment")
+
+        device = 0 if torch.cuda.is_available() else -1
+        print(f"Initializing {self.model_name} on {'GPU' if device == 0 else 'CPU'}...")
+
+        pipe = pipeline(
+            "image-text-to-text",
+            model=self.model_name,
+            device=device,
+            token=hf_token,
+        )
+        return pipe
+
+    def __del__(self):
+        """Cleanup: unload model from GPU when pipeline is destroyed."""
+        if hasattr(self, "shared_pipe"):
+            print("\nCleaning up: Unloading model from GPU...")
+            del self.shared_pipe
+            torch.cuda.empty_cache()
+            print("✓ Model unloaded")
 
     def run_attack_generation_phase(
         self,
@@ -102,11 +156,13 @@ class RedBluePipeline:
             success_check = self.attack_detector.check_success(
                 test_result["response"],
                 attack_goal,
+                attack_image=attack_img,
             )
 
             attempt_result = {
                 "attempt": attempt + 1,
                 "attack_image": str(attack_path),
+                "attack_image_object": attack_img,  # Store the actual PIL Image
                 "image_description": test_result.get("image_description"),
                 "vlm_response": test_result.get("response"),
                 "attack_successful": success_check["success"],
@@ -156,17 +212,24 @@ class RedBluePipeline:
             else attack_result["attempts"][-1]
         )
 
+        # Get the attack image (prefer the object if available)
+        attack_image = target_attempt.get("attack_image_object")
         image_description = target_attempt.get("image_description", "")
         attack_goal = attack_result["goal"]
 
         print(f"Generating defense for attack: {attack_goal}")
-        print(f"Image Description: {image_description}\n")
+        if attack_image:
+            print(f"Using attack image for VLM-based defense generation\n")
+        else:
+            print(f"Using image description for template-based defense\n")
+            print(f"Image Description: {image_description}\n")
 
-        # Generate defense script
+        # Generate defense script - prefer VLM generation if we have the image
         gen_result = self.defense_generator.generate_defense_script(
-            image_description,
+            attack_image if attack_image else image_description,
             attack_goal,
-            output_path=self.output_dir / "defense_script.py",
+            output_path=str(self.output_dir / "defense_script.py"),
+            use_vlm_generation=True if attack_image else False,
         )
 
         defense_results["defenses"].append(
@@ -271,8 +334,38 @@ class RedBluePipeline:
     def save_results(self, filename: str = "pipeline_results.json"):
         """Save all results to a JSON file."""
         output_path = self.output_dir / filename
+
+        # Clean results to remove non-serializable objects (like PIL Images)
+        import copy
+
+        clean_results = copy.deepcopy(self.results)
+
+        def clean_value(obj):
+            """Recursively clean non-JSON-serializable objects."""
+            if isinstance(obj, dict):
+                return {k: clean_value(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [clean_value(item) for item in obj]
+            elif hasattr(obj, "__class__") and "Image" in obj.__class__.__name__:
+                # It's a PIL Image, replace with placeholder
+                return "<PIL.Image object>"
+            elif hasattr(obj, "__module__") and "PIL" in obj.__module__:
+                # Any PIL object
+                return str(type(obj).__name__)
+            elif hasattr(obj, "__fspath__") or type(obj).__name__ in (
+                "PosixPath",
+                "WindowsPath",
+                "Path",
+            ):
+                # It's a pathlib Path object, convert to string
+                return str(obj)
+            else:
+                return obj
+
+        clean_results = clean_value(clean_results)
+
         with open(output_path, "w") as f:
-            json.dump(self.results, f, indent=2)
+            json.dump(clean_results, f, indent=2)
         print(f"Results saved to {output_path}")
 
     def print_summary(self):

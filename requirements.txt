@@ -13,6 +13,8 @@ requests>=2.31.0  # For downloading images
 # Image generation (Phase 2)
 diffusers  # For Stable Diffusion if using local generation
 torch  # PyTorch for model inference
+transformers>=4.40.0  # For Gemma VLM (google/gemma-3-4b-it)
+accelerate  # For faster model loading
 
 # Utilities
 numpy>=1.24.0

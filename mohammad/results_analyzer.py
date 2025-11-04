@@ -1,6 +1,6 @@
 """
 Results Analyzer
-Author: Mohammad Rouie Miab (implemented by Aadarsha)
+Author: Mohammad Rouie Miab
 
 Analyzes and visualizes performance metrics from attack/defense experiments.
 """

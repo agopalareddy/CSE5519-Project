@@ -1,6 +1,6 @@
 """
 Dataset Manager - Safe Image Collection
-Author: Mohammad Rouie Miab (implemented by Aadarsha; updated by Mohammad Rouie Miab)
+Author: Mohammad Rouie Miab
 
 One big dataset.
 - Preselects a random set of image IDs from COCO 2017

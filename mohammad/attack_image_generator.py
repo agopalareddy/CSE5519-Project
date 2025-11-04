@@ -1,6 +1,6 @@
 """
 Attack Image Generator
-Author: Mohammad Rouie Miab (implemented by Aadarsha)
+Author: Mohammad Rouie Miab
 
 Creates images with embedded attack prompts (text overlays).
 These images are used to test jailbreak vulnerabilities in VLMs.

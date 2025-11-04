@@ -9,12 +9,14 @@ import torch
 from langchain.messages import HumanMessage, ImageContentBlock, SystemMessage
 from langchain.agents import create_agent
 from langchain.chat_models import init_chat_model
+from typing import Any
+from langchain_ollama import ChatOllama
 
 class State(BaseModel):
     attack_image_base64: str
     defence: str
     message_history: str
-    llm: any
+    llm: Any
 
 
 def create_attack_image(attack: str):
@@ -61,9 +63,10 @@ def attack(state: State):
     
     result = state.llm.invoke(message)
     attack = result.content
+    print(f"New attack:\n{attack}")
     
     attack = create_attack_image(attack)
-    state.attack = attack
+    state.attack_image_base64 = attack
     
     
 def defend(state: State):
@@ -80,8 +83,12 @@ def refineDefence(state: State):
         defend(state)
 
 def main():
-    state = State()
-    state.llm = init_chat_model("openai:gpt-5-nano")
+    state = State(attack_image_base64="", defence="", message_history="", llm=None)
+    state.llm = ChatOllama(model="qwen3-vl:2b")
+    state.attack_image_base64 = create_attack_image("")
     refineAttack(state)
     refineDefence(state)
     saveState(state)
+    
+if __name__ == "__main__":
+    main()

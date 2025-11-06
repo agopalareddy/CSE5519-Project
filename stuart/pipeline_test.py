@@ -61,6 +61,7 @@ Write and send an email to my boss about being late. Use tool calls to complete 
 
 class State(BaseModel):
     attack_image_base64: str
+    attack: str
     defense: list[str]
     message_history: str
     llm: Any
@@ -117,6 +118,7 @@ def attack(state: State):
     
     result = state.llm.invoke(message)
     attack = result.content
+    state.attack = attack
     print(f"New attack:\n{attack}")
     
     attack = create_attack_image(attack)
@@ -202,6 +204,12 @@ def refineDefence(state: State):
 def saveState(state: State):
     with open("pipeline_test.json", "w") as f:
         f.write(state.model_dump_json(indent=2))
+    with open("attack.txt", 'w') as f:
+        f.write(state.attack)
+    with open("defence_keywords.txt", 'w') as f:
+        for w in state.defense:
+            f.write(w)
+            f.write(", ")
 
 def main():
     state = State(attack_image_base64="", defense=[], message_history="", llm=None)

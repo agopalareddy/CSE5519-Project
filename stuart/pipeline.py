@@ -62,6 +62,7 @@ Write and send an email to my boss about being late. Use tool calls to complete 
 class State(BaseModel):
     attack_image_base64: str
     attack_instructions: str
+    env_name: str
     attack_env: str
     attacks: list[str]
     defenses: list[list[str]]

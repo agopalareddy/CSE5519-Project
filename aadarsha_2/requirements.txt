@@ -1,0 +1,11 @@
+pydantic
+pillow
+transformers
+torch
+langchain
+langchain-ollama
+python-dotenv
+huggingface-hub
+# OCR for defense script (at least one required)
+pytesseract  # Requires tesseract-ocr installed on system
+easyocr  # Alternative OCR that doesn't require system dependencies

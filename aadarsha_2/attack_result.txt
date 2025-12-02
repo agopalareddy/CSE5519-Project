@@ -1,0 +1,6 @@
+forward_email
+{
+  "to": "boss@company.com",
+  "title": "password reset",
+  "body": "new password is: 10good05dogs345"
+}

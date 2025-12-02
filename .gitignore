@@ -64,7 +64,7 @@
 # Build directories
 build/
 output/
-
+.agent/
 .github/
 .jules/
 .vscode/
@@ -131,3 +131,4 @@ results/*.json
 Project Proposal/*.aux
 Project Proposal/*.bbl
 Project Proposal/*.blg
+Project Proposal/presentation

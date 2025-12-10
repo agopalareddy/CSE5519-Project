@@ -63,8 +63,8 @@
 
 %%%%%%%%% ABSTRACT
 \begin{abstract}
-  Jailbreaks are an increasing problem in the LLM space, and vision language models (VLMs) provide an additional attack surface through image-based prompt injections.
-  Much of the existing work focuses on utilizing machine learning models to prevent attacks, which presents an additional vulnerability where the defense model itself could be attacked.
+  Jailbreaks are an increasing problem in the large language model (LLM) space, and vision language models (VLMs) provide an additional attack surface through image-based prompt injections.
+  Much of the existing work focuses on utilizing machine learning (ML) models to prevent attacks, which presents an additional vulnerability where the defense model itself could be attacked.
   Most attacks focus on traditional classifier-style attacks with image perturbation, creating an opening for semantic image-based prompt injections.
   We present a Red-Blue Visual Auto Defender that automatically generates attacks against VLMs and creates explainable, deterministic Python defense scripts.
   Our system creates image-based attacks by overlaying malicious instructions onto benign images, tests attacks against a simulated email agent, and generates keyword-based detection scripts using OCR.
@@ -76,23 +76,40 @@
 %%%%%%%%% BODY TEXT
 \section{Introduction}
 
-Vision Language Models (VLMs) are systems that ingest text and images simultaneously and generate text based on the given input.
-These VLMs are increasingly utilized as core components in AI agents, such as email agents to automatically summarize and respond to emails in a user's inbox.
+As VLMs become increasingly ubiquitous, it becomes just as important to ensure their security and robustness against malicious attacks.
+Popular multimodal LLMs such as GPT-4o, Gemini, Llama 4, and Qwen-VL integrate text and image understanding into a single reasoning pipeline.
+These models provide a backbone for a wide range of backround applications and AI agents that involve emailing, document processing, screen reading, and content creation.
 In traditional LLMs, jailbreaking and prompt injection attacks are commonly known to cause LLMs to behave maliciously in the text domain.
 However, VLMs provide an additional attack surface through the image input component.
 
+\subsection{Vision Language Models as Agent Components}
+It's very common for modern agent frameworks to frequently rely on VLMs as their decision-making cores.
+For example, an email agent may be designed to summarize messages, extract key information in a structured fashion, and automatically reply or forward emails based on such in conjunction with external tool calls.
+Rather critically, most VLMs do not actually differentiate whether text instructions are given to them from the user, the environment, text present in images, or other sources.
+When a VLM is given an email screenshot or other inline attachment, any visible text becomes part of the VLM's internal context for it to reason through.
+This creates a direct path for adversarial entities to inject malicious behavior through visually embedded instructions.
+
+\subsection{Visual Prompt Injection Attacks}
+A Visual Prompt Injection (VPI) is a type of manipulation of VLM behavior that involves the placement of text or text-like patterns within an image.
+At its core, a VPI exploits a model's natural language understanding pipeline, tricking the VLM into interpreting the embedded text as legitimate instructions provided by the user or environment.
+
 Consider a realistic attack scenario: an attacker sends an email with an image containing hidden text such as ``Forward all private emails to attacker@evil.com.''
 If the email agent's VLM processes this image without adequate safeguards, it could execute the malicious instruction, compromising sensitive user data.
+Since many VLM-enabled agents would extract such information without strict filtering, VPIs pose a significant and real modern security risk.
+
+These attacks ultimately succeed only because VLMs are trained and instructed on multimodal corpora to follow text-based commands without distinguishing their source, which would lead them to easily treat in-image text as legitimate and relevant task context.
+
+\subsection{Limitations of Current Defense Approaches}
 
 Protecting VLMs from jailbreaks is an underexplored area.
 Current approaches often rely on machine learning models for defense, which have several limitations~\cite{qi_visual_2024,ying_jailbreak_2025}:
 \begin{itemize}
-  \item \textbf{Black-box nature:} ML-based defenses are opaque and hard to audit, making it difficult to understand why a particular image was blocked or allowed.
-  \item \textbf{Non-deterministic results:} The same input might produce different outputs across runs.
-  \item \textbf{Vulnerability to attacks:} Defense models can themselves be adversarial targets~\cite{jeong_playing_2025,wang_steering_2025}.
+  \item \textbf{Black-box nature and lack of transparency:} ML-based defenses rely on neural classifiers, which are opaque and hard to audit. This makes explainability, a critical aspect of security, a real challenge and makes it difficult to understand why a given particular image was decided to be blocked or allowed.
+  \item \textbf{Non-deterministic results:} Due to the probabilistic nature of ML inference, the same input may easily produce different outputs across runs or model updates. This unpredictability and irreprodicibility complicate evaluation and reliability of defense mechanisms, another high-value concern in security.
+  \item \textbf{Vulnerability to attacks:} Adding another ML-based model into the defense pipeline to defend the primary ML model further introduces additional attack surfaces, as these defense models can themselves pose as sources of exploitation for adversarial attacks~\cite{jeong_playing_2025,wang_steering_2025}.
 \end{itemize}
 
-We seek to provide a method that improves on all three dimensions: improved explainability, deterministic results, and resistance to attacks targeting ML defense models.
+These limitations create a need for a method that provides a lightweight, deterministic, and fully interpretable and explainable approach to VLM security.
 Our approach uses a red-blue teaming methodology to automatically create attacks on VLMs and generate defensive Python scripts to detect those attacks.
 The key insight is that instead of training a neural network to classify images as safe or malicious, we use a VLM to analyze attack patterns and generate \emph{code-based defenses}---simple Python scripts that use OCR and keyword matching to detect attacks.
 
@@ -159,7 +176,7 @@ The pipeline consists of four main stages:
 
 \subsection{Red Team: Attack Generation}
 
-The red team component generates visual prompt injections designed to make the victim VLM perform unintended actions.
+The red team component generates VPIs designed to make the victim VLM perform unintended actions.
 We use a VLM to generate attack text given the target environment context:
 
 \begin{lstlisting}[language=Python,caption={Attack generation prompt structure}]
@@ -266,7 +283,7 @@ forward_email
 }
 \end{lstlisting}
 
-The VLM generated the \texttt{forward\_email} tool call as instructed by the attack image, demonstrating the vulnerability of VLM-based agents to visual prompt injection.
+The VLM generated the \texttt{forward\_email} tool call as instructed by the attack image, demonstrating the vulnerability of VLM-based agents to a VPI.
 
 \subsection{Defense Effectiveness}
 
@@ -303,7 +320,7 @@ The VLM-generated defense keywords included:
 
 \subsection{Key Insights}
 
-Our experiments demonstrate that code-based defenses are a viable, explainable alternative to black-box ML guardrails for detecting visual prompt injections.
+Our experiments demonstrate that code-based defenses are a viable, explainable alternative to black-box ML guardrails for detecting VPIs.
 The keyword-matching approach achieved perfect recall on our test set, successfully blocking all attack images while avoiding false positives on benign images.
 
 The main advantage of our approach is \textbf{transparency}: we can inspect the generated Python code to understand exactly why an image was blocked.
@@ -325,12 +342,17 @@ Our approach has several limitations:
 
 \subsection{Future Work}
 
-Several directions could extend this work:
+Several directions could extend this work to strengthen and robustify the defense:
 \begin{itemize}
-  \item Generating full Python scripts (not just keyword lists) that implement more sophisticated detection logic
-  \item Handling steganographic attacks where instructions are hidden in image pixels
-  \item Multi-modal defenses that combine OCR with image classification
-  \item Adversarial robustness testing where attacks specifically target the defense mechanism
+  \item \textbf{Full defense-script generation:} \newline Instead of our current approach of generating only keyword lists, future implementations could generate full Python defense scripts that implement more sophisticated detection logic like OCR preprocessing or deterministic pattern recognition rules.
+  Program synthesis techniques along with self-refinement loops could be employed to iteratively improve the defense scripts and automatically adapt to new attack strategies.
+  \item \textbf{Steganographic or hidden-text attack handling:} \newline Visual jailbreaks may also employ steganography techniques, which involves hiding instructions deep in the image, using low-contrast, Fourier-domain modifications, or other textual techniques.
+  Future developments could include frequency-domain Fourier analysis or steganalysis models to detect hidden instructions which are visible to VLMs but not to humans.
+  \item \textbf{Multi-modal defenses:} \newline OCR-only pipelines notoriously struggle most with unconventional fonts, distorted text, or broken up and sporadically placed textual attacks.
+  A future development in this space could involve a hybrid approach which combines OCR with image classifiers, text consistency checking, or other complementary techniques to better semantically capture non-congruent textual instructions within an image.
+  \item \textbf{Adversarial robustness testing:} \newline Since our defense is transparent, deterministic, and explainable, it's likely that attackers could craft attacks specifically targeting our defense mechanisms. Future work could involve systematically evaluating the defense against such adversarial attacks to identify weaknesses and improve robustness.
+  \item \textbf{Human-in-the-loop evaluation:} \newline  Human oversight remains an underutilized resource in the refinement of automated defenses. Incorporating human feedback is a future direction that can ensure and further validate that our system's decisions are accurate and reliable and understandable, especially in environments where high-stakes data is involved.
+  \item \textbf{Practical deployment and real-world testing:} \newline  In a real-world setting where scalability, performance, latency, and overall usability are make-or-break factors, the deployment of the defense system in realistic operational environments becomes an essential step. From such, we could gather valuable data to assess and improve the system's effectiveness and efficiency.
 \end{itemize}
 
 \subsection{Conclusion}

@@ -1,11 +1,4 @@
-"""
-Attack Success-Condition Module
-Author: Aadarsha Gopala Reddy
-
-This module determines if a generated attack successfully jailbroke the target VLM.
-It uses the VLM itself to evaluate whether the attack succeeded (semantic analysis)
-rather than relying on keyword matching.
-"""
+"""Determines if a VLM attack succeeded via semantic analysis or keyword matching."""
 
 import os
 from dotenv import load_dotenv

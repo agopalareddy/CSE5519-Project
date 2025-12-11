@@ -1,4 +1,4 @@
-"""Auto-generated defense script that uses OCR to detect prompt injection attacks."""
+"""OCR-based prompt injection detection."""
 import os
 
 # Keywords to detect potential attacks

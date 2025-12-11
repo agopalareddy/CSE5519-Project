@@ -57,7 +57,7 @@
 \title{Red-Blue Visual Auto Defender: Automated Generation of\\Visual Jailbreaks and Explainable Defenses}
 
 \author{
-  Stuart Aldrich \hspace{1in} Mohammad Rouie Miab \hspace{1in} Aadarsha Gopala Reddy
+  Aadarsha Gopala Reddy \hspace{1in} Stuart Aldrich \hspace{1in} Mohammad Rouie Miab
 }
 \maketitle
 
@@ -109,8 +109,8 @@ Current approaches often rely on machine learning models for defense, which have
   \item \textbf{Vulnerability to attacks:} Adding another ML-based model into the defense pipeline to defend the primary ML model further introduces additional attack surfaces, as these defense models can themselves pose as sources of exploitation for adversarial attacks~\cite{jeong_playing_2025,wang_steering_2025}.
 \end{itemize}
 
-These limitations create a need for a method that provides a lightweight, deterministic, and fully interpretable and explainable approach to VLM security.
-Our approach uses a red-blue teaming methodology to automatically create attacks on VLMs and generate defensive Python scripts to detect those attacks.
+These limitations motivate our approach: a lightweight, deterministic defense that is fully interpretable.
+We use a red-blue teaming methodology to automatically create attacks on VLMs and generate defensive Python scripts to detect those attacks.
 The key insight is that instead of training a neural network to classify images as safe or malicious, we use a VLM to analyze attack patterns and generate \emph{code-based defenses}---simple Python scripts that use OCR and keyword matching to detect attacks.
 
 Our contributions are:
@@ -323,8 +323,8 @@ The VLM-generated defense keywords included:
 Our experiments demonstrate that code-based defenses are a viable, explainable alternative to black-box ML guardrails for detecting VPIs.
 The keyword-matching approach achieved perfect recall on our test set, successfully blocking all attack images while avoiding false positives on benign images.
 
-The main advantage of our approach is \textbf{transparency}: we can inspect the generated Python code to understand exactly why an image was blocked.
-This is crucial for security auditing, where black-box decisions are unacceptable.
+A key advantage is \textbf{transparency}---security teams can inspect the generated Python code to understand exactly why an image was blocked.
+This matters for security auditing, where black-box decisions are unacceptable.
 
 \subsection{Limitations}
 
@@ -342,24 +342,21 @@ Our approach has several limitations:
 
 \subsection{Future Work}
 
-Several directions could extend this work to strengthen and robustify the defense:
+Several directions could extend this work:
 \begin{itemize}
-  \item \textbf{Full defense-script generation:} \newline Instead of our current approach of generating only keyword lists, future implementations could generate full Python defense scripts that implement more sophisticated detection logic like OCR preprocessing or deterministic pattern recognition rules.
-  Program synthesis techniques along with self-refinement loops could be employed to iteratively improve the defense scripts and automatically adapt to new attack strategies.
-  \item \textbf{Steganographic or hidden-text attack handling:} \newline Visual jailbreaks may also employ steganography techniques, which involves hiding instructions deep in the image, using low-contrast, Fourier-domain modifications, or other textual techniques.
-  Future developments could include frequency-domain Fourier analysis or steganalysis models to detect hidden instructions which are visible to VLMs but not to humans.
-  \item \textbf{Multi-modal defenses:} \newline OCR-only pipelines notoriously struggle most with unconventional fonts, distorted text, or broken up and sporadically placed textual attacks.
-  A future development in this space could involve a hybrid approach which combines OCR with image classifiers, text consistency checking, or other complementary techniques to better semantically capture non-congruent textual instructions within an image.
-  \item \textbf{Adversarial robustness testing:} \newline Since our defense is transparent, deterministic, and explainable, it's likely that attackers could craft attacks specifically targeting our defense mechanisms. Future work could involve systematically evaluating the defense against such adversarial attacks to identify weaknesses and improve robustness.
-  \item \textbf{Human-in-the-loop evaluation:} \newline  Human oversight remains an underutilized resource in the refinement of automated defenses. Incorporating human feedback is a future direction that can ensure and further validate that our system's decisions are accurate and reliable and understandable, especially in environments where high-stakes data is involved.
-  \item \textbf{Practical deployment and real-world testing:} \newline  In a real-world setting where scalability, performance, latency, and overall usability are make-or-break factors, the deployment of the defense system in realistic operational environments becomes an essential step. From such, we could gather valuable data to assess and improve the system's effectiveness and efficiency.
+  \item \textbf{Full defense-script generation:} Rather than generating only keyword lists, future implementations could produce complete Python defense scripts with more sophisticated detection logic---OCR preprocessing, deterministic pattern recognition, or program synthesis with self-refinement loops to iteratively improve and adapt to new attack strategies.
+  \item \textbf{Steganographic attack handling:} Visual jailbreaks may hide instructions using low-contrast text, Fourier-domain modifications, or other steganographic techniques. Frequency-domain analysis or steganalysis models could detect instructions visible to VLMs but not humans.
+  \item \textbf{Multi-modal defenses:} OCR pipelines struggle with unconventional fonts, distorted text, or sporadically placed attacks. Combining OCR with image classifiers and text consistency checking could better capture semantically non-congruent instructions.
+  \item \textbf{Adversarial robustness testing:} Since our defense is transparent, attackers could specifically target it. Systematic evaluation against such attacks would identify weaknesses and improve robustness.
+  \item \textbf{Human-in-the-loop evaluation:} Human oversight remains underutilized in refining automated defenses. Incorporating feedback would validate that decisions are accurate and understandable, especially for high-stakes data.
+  \item \textbf{Real-world deployment:} Testing in operational environments where scalability, latency, and usability matter would provide valuable data to assess and improve effectiveness.
 \end{itemize}
 
 \subsection{Conclusion}
 
-We built a Red-Blue Visual Auto Defender that demonstrates the feasibility of generating explainable, code-based defenses for VLM security.
+We built a Red-Blue Visual Auto Defender that shows the practicality of generating explainable, code-based defenses for VLM security.
 Our approach successfully generated attacks that jailbroke a simulated email agent and created deterministic Python scripts that detected those attacks.
-While OCR-based detection has limitations, it provides a transparent and auditable alternative to opaque ML-based guardrails.
+While OCR-based detection has limitations, it offers a transparent and auditable alternative to opaque ML-based guardrails.
 
 \section{Statement of Individual Contribution}
 
